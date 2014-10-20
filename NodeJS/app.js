@@ -1,9 +1,27 @@
-var http        = require('http');
-var url         = require('url');
-var mongoose    = require('mongoose');
-var crypto      = require('crypto');
+var express         = require('express');
+
+var http            = require('http');
+var path            = require('path');
+
+var mongoose        = require('mongoose');
+var passport        = require('passport');
+var LocalStrategy   = require('passport-local').Strategy;
+var bodyParser      = require('body-parser');
+
+// Setup express.
+
+var app = express();
+app.set('port', process.env.PORT || 1337);
+app.use( bodyParser.json() );
+app.use( bodyParser.urlencoded() );
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Setup mongo.
 
 mongoose.connect('mongodb://127.0.0.1/dating_site_db');
+
 var UserSchema 	= new mongoose.Schema(
 {
 	username : {
@@ -14,80 +32,116 @@ var UserSchema 	= new mongoose.Schema(
 	password : {
 		type 		: String,
 		required 	: true
-	}
+	},
+    firstname : {
+        type        : String,
+        required    : false
+    },
+    name : {
+        type        : String,
+        required    : false
+    },
+    age : {
+        type        : Number,
+        required    : false
+    },
+    gender : {
+        type        : String,
+        required    : false
+    },
+    orientation : {
+        type        : String,
+        required    : false
+    },
+    location : {
+        type        : String,
+        required    : false
+    },
+    image : {
+        type        : String,
+        required    : false
+    }
+
 });	
-UserSchema.statics.findByCredentials = function(arg_username,arg_password,cb) {
-	var User = this || mongoose.model('User');
-	User.findOne({username: arg_username, password: arg_password}, cb);
-};
-UserSchema.statics.add = function(arg_username,arg_password,cb) {
-	var User = this || mongoose.model('User');
-	var newUser = new User({username : arg_username, password: arg_password});
-	newUser.save(cb);
-};
-UserSchema.statics.remove = function(arg_username,arg_password,cb) {
-	var User = this || mongoose.model('User');
-	User.findOne({username: arg_username, password: arg_password}).remove(cb);
-};
+
+// When form is complete, put cb argument at the end of the list of all arguments
+UserSchema.statics.add = function(arg_username, arg_password, cb, arg_firstname, arg_name, arg_age, arg_gender, arg_orientation, arg_location, arg_image) {
+    var User = this || mongoose.model('User');
+    var newUser = new User({username: arg_username, password: arg_password, firstname : arg_firstname, name: arg_name, age: arg_age, gender: arg_gender, orientation: arg_orientation, location: arg_location, image: arg_image});
+    newUser.save(cb);
+}
 var User = mongoose.model('User',UserSchema);
 
-// Query as: http://ip:port/?type=login&username=test_user&password=test_password
-function request_func(req,res)
+// Passport section.
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
+passport.use(new LocalStrategy(function(username, password, done) {
+    process.nextTick(function () {
+      User.findOne({'username':username},
+        function(err, user) {
+            if (err) { 
+                return done(err); 
+            }
+            if (!user) { 
+                return done(null, false); 
+            }
+            if (user.password != password) { 
+                return done(null, false); 
+            }
+            return done(null, user);
+        });
+    });
+  }
+));
+
+app.get('/login', function(req, res, next) {
+  res.sendfile('views/login.html');
+});
+app.get('/register', function(req, res, next) {
+  res.sendfile('views/register.html');
+});
+app.get('/profile', function(req, res, next) {
+    res.sendfile('views/profile.html');
+    User.findOne(req.query,
+        function(err, user) {
+            if (err || !user) { 
+                return false; 
+            }
+            console.log(user)
+            return true;
+        });
+});
+app.get('/loginSuccess' , function(req, res, next){
+    res.send('Successfully authenticated');
+});
+app.get('/loginFailure' , function(req, res, next){
+    res.send('Failure to authenticate');
+});
+
+app.post('/login', passport.authenticate('local', 
 {
-    try
-    {
-        if (req.url == '/favicon.ico')
-        {
-            res.end();
-            return;
-        }
+    failureRedirect: '/loginFailure'
+}), 
+function(req, res) {
+    // If this function gets called, authentication was successful.
+    res.redirect('/profile?_id=' + req.user._id );
+  }
+);
+app.post('/register', function(req, res) 
+{
+  User.add(req.body.username, req.body.password, function(err, data) {
+    if(!err)
+      res.end('Successfully registered');
+    else
+      res.end('Failure to register');
+  });
+});
 
-        res.writeHead(200);        
-        
-        var parsedUrl      	= url.parse(req.url, true);
-        var queryAsObject  	= parsedUrl.query;
-
-        var arg_type      	= String(queryAsObject['type']);
-        var arg_username 	= String(queryAsObject['username']);
-        var arg_password  	= String(queryAsObject['password']);
-    	
-        if(arg_type == 'login')
-        {      
-			User.findByCredentials(arg_username, arg_password, function(err, data) {
-				if(!err && data != null)
-					res.end('true');
-				else
-					res.end('false');
-			});
-        }
-        if(arg_type == 'register')
-        {
-        	User.add(arg_username, arg_password, function(err, data) {
-        		if(!err)
-        			res.end('true');
-        		else
-        			res.end('false');
-        	});
-        }
-        if(arg_type == 'deregister')
-        {
-        	User.remove(arg_username, arg_password, function(err, data) {
-				if(!err && data == 1)
-					res.end('true');
-				else
-        			res.end('false');
-			});
-        }
-    }
-    catch(e)
-    {
-    	console.log("Exception caught: " + e);
-    	res.end('false');
-    }
-}
-
-// mongoose.disconnect();
-
-var server = http.createServer(request_func);
-server.listen(1337,"127.0.0.1");
-console.log('Server running at http://127.0.0.1:1337');
+http.createServer(app).listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+});
