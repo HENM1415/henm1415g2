@@ -2,11 +2,14 @@ var express         = require('express');
 
 var http            = require('http');
 var path            = require('path');
+var fs              = require('fs');
 
 var mongoose        = require('mongoose');
 var passport        = require('passport');
 var LocalStrategy   = require('passport-local').Strategy;
 var bodyParser      = require('body-parser');
+
+var cheerio         = require('cheerio');
 
 // Setup express.
 
@@ -76,6 +79,15 @@ UserSchema.statics.add = function(arg_username, arg_password, arg_firstname, arg
         orientation: arg_orientation, location: arg_location, description: arg_description, hobbies: arg_hobbies});
     newUser.save(cb);
 }
+UserSchema.statics.get = function(arg_username, cb) {
+    var User = this || mongoose.model('User');
+    User.findOne({'username':arg_username}, function(err, user) {
+        if(err || !user) {
+            return null;
+        }
+        return user;
+    });
+}
 var User = mongoose.model('User',UserSchema);
 
 // Passport section.
@@ -111,6 +123,46 @@ app.get('/login', function(req, res, next) {
 app.get('/register', function(req, res, next) {
   res.sendfile('views/register.html');
 });
+app.get('/welcome', function(req, res, next) {
+    res.sendfile('views/welcome.html');
+    User.findOne(req.query,
+        function(err, user) {
+            if (err || !user) { 
+                return false; 
+            }
+            console.log(user)
+            return true;
+        });
+});
+app.get('/profile', function(req, res, next) {
+    console.log("Searching user: " + req.query.username);
+
+    var user = User.get(req.query.username);
+
+    if(user == null) {
+        res.send("Invalid user!");
+    }
+    else { 
+        // Modify base profile html with user data.
+        fs.readFile("views/profile.html", "utf8", function(err,html) {
+
+        var $ = cheerio.load(html);
+
+        $('#first-name-slot')[0].attribs.placeholder = user.name;
+        $('#last-name-slot')[0].attribs.placeholder = user.firstname;
+        $('#gender-slot')[0].attribs.placeholder = user.gender;
+        $('#age-slot')[0].attribs.placeholder = user.age;
+        $('#city-slot')[0].attribs.placeholder = user.location;
+        $('#looking-for-slot')[0].attribs.placeholder = user.orientation;
+        $('#description-slot')[0].attribs.placeholder = user.description;
+        $('#hobbies-slot')[0].attribs.placeholder = user.hobbies;
+        
+        res.send($.html());
+    });
+
+    }
+});
+
 app.get('/loginSuccess' , function(req, res, next){
     res.send('Successfully authenticated');
 });
