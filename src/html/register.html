@@ -1,11 +1,53 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <meta name="author" content="henm1415g2">
+    <title> Registration Page</title>
+    <link rel="stylesheet" type="text/css" href="css.css">
+    <link href='http://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
   </head>
-
   <body>
-    <h2>Register on the Almost-Perfect.com</h2>
-    <p>Description</p>
-    <p>Registration Data</p>
+    <h1 style="color:white">Here you can register to Almost-Perfect.com</h1>
+    <div style="display: inline-block; position: fixed; top: 0; bottom: 0; left: 0; right: 0; width: 600px; height: 500px; margin: auto; overflow-y: scroll;">
+      <section class="loginform cf" >  
+    	<form name="register" action="register_submit" method="get" accept-charset="utf-8">  
+          <ul>  
+            <li><label for="usermail">Email</label>  
+              <input type="email" name="usermail" placeholder="yourname@email.com" required size="40"></li>  
+            <li><label for="password">Password</label>  
+              <input type="password" name="password" placeholder="password" required size="40"></li>  
+            <li><label for="last-name">Last name</label>  
+              <input type="text" name="last-name" placeholder="Mustermann" required size="40"></li>   
+            <li><label for="first-name">First name</label>  
+              <input type="text" name="first-name" placeholder="Peter" required size="40"></li>  
+	    <li><label for="gender">Gender</label>
+	      <select name="gender" >
+		<option>Male</option>
+		<option>Female</option>
+	      </select> </li>
+            <li><label for="age">Age</label>  
+              <input type="text" name="age" placeholder="18" required size="40"></li>  
+            <li><label for="city">City</label>  
+              <input type="text" name="city" placeholder="Aachen" required size="40"></li>  
+	    <li><label for="looking-for">Looking for</label>
+	      <select name="looking-for" >
+		<option>Male</option>
+		<option>Female</option>
+	      </select> </li>
+            <li><label for="description">About yourself</label>  
+              <textarea type="text" name="description" placeholder="I am ..." cols="52" rows="7"></textarea></li>  
+            <li><label for="hobbies">Hobbies</label>
+              <input type="text" name="hobbies" placeholder="Sports, ..." required size="40"></li>  
+            <li>  
+	      <table border="0"  width="100%" cellspacing="50" >
+		<tr>
+		  <td><input type="submit" value="Register" margin-right="100px"></td>
+		  <td><input type="submit" value="Back"></td>
+		</tr>
+	      </table>
+	    </li>  
+          </ul>  
+    	</form>  
+      </section>  
+    </div>
   </body>
 </html>
