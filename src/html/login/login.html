@@ -6,20 +6,31 @@
 		<link href='http://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
 	</head>
 	<body>
-		<h1 style="color:white">WELCOME TO ALMOST TOGETHER</h1>
-		<div style="display: inline-block; position: fixed; top: 0; bottom: 0; left: 0; right: 0; width: 200px; height: 100px; margin: auto;">
+		<h1 style="color:white; text-align: center; padding-top: 160px; text-shadow: 0 0 30px black, 0 1px 0 rgba(0,0,0, .25)">ALMOST PERFECT</h1>
+        <div style="display: inline-block; position: fixed; top: 0; bottom: 0; left: 0; right: 0; width: 200px; height: 100px; margin: auto;">
 		<section class="loginform cf" >  
     		<form name="login" action="index_submit" method="get" accept-charset="utf-8">  
         		<ul>  
-            		<li><label for="usermail">Email</label>  
+            		<li><label for="usermail"><p style=" font-family: 'Lora', serif; font-weight: 20px; color: #13130C; text-shadow: 0 0 55px black, 0 1px 0 rgba(0,0,0, .25); padding-left:45px; display:flex">EMAIL</p></label>  
             			<input type="email" name="usermail" placeholder="yourname@email.com" required></li>  
-            		<li><label for="password">Password</label>  
+                    <li><label for="password"><p style=" font-family: 'Lora', serif; font-weight: 20px; color: #13130C; text-shadow: 0 0 55px black, 0 1px 0 rgba(0,0,0, .25); padding-left:30px">PASSWORD</p></label>  
             		<input type="password" name="password" placeholder="password" required></li>  
-            		<li>  
-            		<input type="submit" value="Login"></li>  
-        		</ul>  
-    		</form>  
+            		<div style="display: inline-block; position: fixed; top: 10; bottom: 0; left: 5; right: 0; width: 710px; height: 240px; margin: auto;">
+                    <li>  
+            		<input type="submit" value="Login"></li> 
+                    </div> 
+                </ul>  
+            </form>
+             
     	</section>  
     	</div>
+        <div style="display: inline-block; position: fixed; top: 0; bottom: 30; left: 60; right: 0; width: 100px; height: 100px; margin: auto;">
+        <section class="registerform cf" >
+            <form name="register" action="index_submit" method="get" accept-charset="utf-8" >
+                    <input type="submit" value="Register">
+            </form>
+        </div>
+        </section>
+        </div>
 	</body>
 </html>
