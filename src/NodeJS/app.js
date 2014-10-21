@@ -17,7 +17,7 @@ app.use( bodyParser.urlencoded() );
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static('views'));
+//app.use(express.static('views'));
 
 // Setup mongo.
 
@@ -111,17 +111,6 @@ app.get('/login', function(req, res, next) {
 app.get('/register', function(req, res, next) {
   res.sendfile('views/register.html');
 });
-app.get('/welcome', function(req, res, next) {
-    res.sendfile('views/welcome.html');
-    User.findOne(req.query,
-        function(err, user) {
-            if (err || !user) { 
-                return false; 
-            }
-            console.log(user)
-            return true;
-        });
-});
 app.get('/loginSuccess' , function(req, res, next){
     res.send('Successfully authenticated');
 });
@@ -133,7 +122,7 @@ app.post('/logout', function(req, res){
     res.sendfile('views/login.html');
 });
 
-app.post('/login', passport.authenticate('local', 
+/*app.post('/login', passport.authenticate('local', 
 {
     failureRedirect: '/loginFailure'
 }), 
@@ -141,7 +130,7 @@ function(req, res) {
     // If this function gets called, authentication was successful.
     res.redirect('/welcome?_id=' + req.user._id );
   }
-);
+); */
 app.post('/register', function(req, res) 
 {
   User.add(req.body.usermail, req.body.password, req.body.first_name, req.body.last_name, req.body.age, req.body.gender, req.body.looking_for, 
@@ -152,7 +141,22 @@ app.post('/register', function(req, res)
       res.sendfile('views/register.html');
   });
 });
+app.post('/welcome', function(req, res, next) {
+    User.findOne({usermail: req.body.usermail, password: req.body.password},
+        function(err, user) {
+            if (err || !user) { 
+                res.sendfile('views/login.html');
+                return false; 
+            }
+            res.sendfile('views/welcome.html');
+            fillPage(user);
+            return true;
+    });
+});
 
+var fillPage = function(user) {
+    console.log(user);
+}
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
