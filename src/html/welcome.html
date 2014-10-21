@@ -7,14 +7,55 @@
 	</head>
 	<body>
 		<h1 style="color:white; text-align: center; padding-top: 0px; text-shadow: 0 0 30px black, 0 1px 0 rgba(0,0,0, .25)">ALMOST PERFECT</h1>
-		<div style="width:800px;height:800px; margin:0 auto;border: 0px solid #000; background-color: rgba(255,255,255, .45)"></div>
+		<div style="width:600px;height:1000px; margin:0 auto;border: 0px solid #000; background-color: rgba(255,255,255, .45)">
+		  <h2 style="padding-left: 50px; padding-top: 10px">Your Profile Data:</h2>
+		  <section class="loginform cf" >  
+    		    <form name="register" action="register_submit" method="get" accept-charset="utf-8">  
+		      <ul>  
+			<li><label for="usermail"><p style="color: #13130C">Email</p></label>  
+			  <input type="email" name="usermail" placeholder="yourname@email.com" required size="40"></li>  
+			<li><label for="password"><p style="color: #13130C">Password</p></label>  
+			  <input type="password" name="password" placeholder="password" required size="40"></li>  
+			<li><label for="last-name"><p style="color: #13130C">Last name</p></label>  
+			  <input type="text" name="last-name" placeholder="Mustermann" required size="40"></li>   
+			<li><label for="first-name"><p style="color: #13130C">First name</p></label>  
+			  <input type="text" name="first-name" placeholder="Peter" required size="40"></li>  
+			<li><label for="gender"><p style="color: #13130C">Gender</p></label>
+			  <select name="gender" >
+			    <option>Male</option>
+			    <option>Female</option>
+			</select> </li>
+			<li><label for="age"><p style="color: #13130C">Age</p></label>  
+			  <input type="text" name="age" placeholder="18" required size="40"></li>  
+			<li><label for="city"><p style="color: #13130C">City</p></label>  
+			  <input type="text" name="city" placeholder="Aachen" required size="40"></li>  
+			<li><label for="looking-for"><p style="color: #13130C">Looking for</p></label>
+			  <select name="looking-for" >
+			    <option>Male</option>
+			    <option>Female</option>
+			</select> </li>
+			<li><label for="description"><p style="color: #13130C">About yourself</p></label>  
+			  <textarea type="text" name="description" placeholder="I am ..." cols="52" rows="7"></textarea></li>  
+			<li><label for="hobbies"><p style="color: #13130C">Hobbies</p></label>
+			  <input type="text" name="hobbies" placeholder="Sports, ..." required size="40"></li>  
+			<li>  
+			  <!-- <table border="0"  width="100%" cellspacing="50" > -->
+			  <!--   <tr> -->
+			  <!--     <td><input type="submit" value="Edit"></td> -->
+			  <!--   </tr> -->
+			  <!-- </table> -->
+			</li>  
+		      </ul>  
+    		    </form>  
+		  </section>  
 
+		</div>
 
-		</section>  
     	</div>
         <div style="display: inline-block; position: fixed; top: 0; bottom: 30; left: 60; right: 0; width: 100px; height: 100px; margin: auto;">
         <section class="registerform cf" >
             <form name="logout" action="index_submit" method="get" accept-charset="utf-8" >
+	      <!-- TODO: navigation back -->
                     <input type="submit" value="logout">
             </form>
         </section>
