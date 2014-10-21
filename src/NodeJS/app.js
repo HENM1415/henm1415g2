@@ -36,27 +36,27 @@ var UserSchema 	= new mongoose.Schema(
 	},
     firstname : {
         type        : String,
-        required    : false
+        required    : true
     },
     name : {
         type        : String,
-        required    : false
+        required    : true
     },
     age : {
         type        : Number,
-        required    : false
+        required    : true
     },
     gender : {
         type        : String,
-        required    : false
+        required    : true
     },
     orientation : {
         type        : String,
-        required    : false
+        required    : true
     },
     location : {
         type        : String,
-        required    : false
+        required    : true
     },
     description : {
         type        : String,
@@ -64,7 +64,7 @@ var UserSchema 	= new mongoose.Schema(
     },
     hobbies : {
         type        : String,
-        required    : false
+        required    : true
     }
 
 });	
@@ -128,6 +128,10 @@ app.get('/loginSuccess' , function(req, res, next){
 app.get('/loginFailure' , function(req, res, next){
     res.send('Failure to authenticate');
 });
+app.post('/logout', function(req, res){
+    req.logout();
+    res.sendfile('views/login.html');
+});
 
 app.post('/login', passport.authenticate('local', 
 {
@@ -143,9 +147,9 @@ app.post('/register', function(req, res)
   User.add(req.body.usermail, req.body.password, req.body.first_name, req.body.last_name, req.body.age, req.body.gender, req.body.looking_for, 
     req.body.location, req.body.description, req.body.hobbies, function(err, data) {
     if(!err)
-      res.end('Successfully registered');
+      res.sendfile('views/login.html');
     else
-      res.end('Failure to register');
+      res.sendfile('views/register.html');
   });
 });
 
