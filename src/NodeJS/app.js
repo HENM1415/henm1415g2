@@ -16,7 +16,8 @@ app.use( bodyParser.json() );
 app.use( bodyParser.urlencoded() );
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('views'));
 
 // Setup mongo.
 
@@ -57,7 +58,11 @@ var UserSchema 	= new mongoose.Schema(
         type        : String,
         required    : false
     },
-    image : {
+    description : {
+        type        : String,
+        required    : false
+    },
+    hobbies : {
         type        : String,
         required    : false
     }
@@ -65,9 +70,10 @@ var UserSchema 	= new mongoose.Schema(
 });	
 
 // When form is complete, put cb argument at the end of the list of all arguments
-UserSchema.statics.add = function(arg_username, arg_password, cb, arg_firstname, arg_name, arg_age, arg_gender, arg_orientation, arg_location, arg_image) {
+UserSchema.statics.add = function(arg_username, arg_password, arg_firstname, arg_name, arg_age, arg_gender, arg_orientation, arg_location, arg_description, arg_hobbies, cb) {
     var User = this || mongoose.model('User');
-    var newUser = new User({username: arg_username, password: arg_password, firstname : arg_firstname, name: arg_name, age: arg_age, gender: arg_gender, orientation: arg_orientation, location: arg_location, image: arg_image});
+    var newUser = new User({username: arg_username, password: arg_password, firstname : arg_firstname, name: arg_name, age: arg_age, gender: arg_gender, 
+        orientation: arg_orientation, location: arg_location, description: arg_description, hobbies: arg_hobbies});
     newUser.save(cb);
 }
 var User = mongoose.model('User',UserSchema);
@@ -105,8 +111,8 @@ app.get('/login', function(req, res, next) {
 app.get('/register', function(req, res, next) {
   res.sendfile('views/register.html');
 });
-app.get('/profile', function(req, res, next) {
-    res.sendfile('views/profile.html');
+app.get('/welcome', function(req, res, next) {
+    res.sendfile('views/welcome.html');
     User.findOne(req.query,
         function(err, user) {
             if (err || !user) { 
@@ -129,12 +135,13 @@ app.post('/login', passport.authenticate('local',
 }), 
 function(req, res) {
     // If this function gets called, authentication was successful.
-    res.redirect('/profile?_id=' + req.user._id );
+    res.redirect('/welcome?_id=' + req.user._id );
   }
 );
 app.post('/register', function(req, res) 
 {
-  User.add(req.body.username, req.body.password, function(err, data) {
+  User.add(req.body.usermail, req.body.password, req.body.first_name, req.body.last_name, req.body.age, req.body.gender, req.body.looking_for, 
+    req.body.location, req.body.description, req.body.hobbies, function(err, data) {
     if(!err)
       res.end('Successfully registered');
     else
